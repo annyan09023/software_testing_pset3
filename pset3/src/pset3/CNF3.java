@@ -12,8 +12,47 @@ public class CNF3 { // represents a 3-CNF formula
     // "numClauses" is the number of clauses in the "formula".
     // assume: numVars >= 1, numClauses >= 1, and the
     //     variables are from the set { v0, v1, ..., v9 }
+	this.clauses=new LinkedList<Clause>();
     StringTokenizer st = new StringTokenizer(formula, " \t\n\r\f()");
     // your code goes here
+    this.numVars = numVars;
+    for (int i=0 ; i< numClauses; i++){
+    	int var1, var2, var3;
+    	boolean neg1, neg2 , neg3;
+    	String str = st.nextToken();
+    	if(str.contains("and"))
+    		str = st.nextToken();
+    	if(str.contains("!")){
+    	  neg1 = false;	 
+    	  var1 = str.charAt(2)-'0';
+    	}
+    	else{
+    	  neg1 = true;
+          var1 = str.charAt(1)-'0';
+    	}
+    	str = st.nextToken();
+    	str = st.nextToken();
+    	if(str.contains("!")){
+    	  neg2 = false;	 
+    	  var2 = str.charAt(2)-'0';
+    	}
+    	else{
+    	  neg2 = true;
+    	  var2 = str.charAt(1)-'0';
+    	}
+    	str = st.nextToken();
+    	str = st.nextToken();
+    	if(str.contains("!")){
+    	  neg3 = false;	 
+    	  var3 = str.charAt(2)-'0';
+    	}
+    	else{
+    	  neg3 = true;
+    	  var3 = str.charAt(1)-'0';
+    	}
+    	//System.out.println(var1+" "+neg1+" "+var2+" "+neg2+" "+var3+" "+neg3);
+    	this.clauses.add(new Clause(var1, neg1, var2, neg2, var3, neg3));
+    }
   }
   public int numVars() {
     return numVars;
@@ -35,13 +74,21 @@ public class CNF3 { // represents a 3-CNF formula
   }
   public int countSatisfiedClauses(boolean[] assignment) {
     //precondition: assignment != null && assignment.length == numVars
-
+    int size = this.clauses.size();
+    int count = 0;
+    for(int i=0; i<size; i++){
+    	Clause cls = clauses.get(i);
+    	if(assignment[cls.var1]==cls.neg1||assignment[cls.var2]==cls.neg2||assignment[cls.var3]==cls.neg3)
+    		count++;
+    }
+    return count;
   }
   
   public static void main(String[] a) {
-    CNF3 formula = new CNF3("(v0 or v1 or v2) and (!v0 or !v1 or v2) and (!v0 or v1 or !v2)", 3, 3);
+    //CNF3 formula = new CNF3("(v0 or v1 or v2) and (!v0 or !v1 or v2) and (!v0 or v1 or !v2)", 3, 3);
+   // System.out.println(formula.countSatisfiedClauses(new boolean[]{true,true,true}));
     CNF3 formula2 = new CNF3("(v0 or v1 or v2) and (v0 or !v1 or v3) and (!v0 or v1 or !v2) and (!v0 or !v1 or v2) and (!v0 or !v1 or !v2) and (!v0 or !v1 or !v3) and (v0 or v1 or !v2) and (v0 or v1 or v3) and (v0 or !v1 or v2) and (v0 or !v1 or !v2) and (!v0 or v1 or v2)", 4, 11);
     MAX3SATSolver solver = new MAX3SATSolver();
-    solver.solve(formula);
+    solver.solve(formula2);
   }
 }
